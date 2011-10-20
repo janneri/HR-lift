@@ -8,7 +8,6 @@ class Department extends LongKeyedMapper[Department] with IdPK with OneToMany[Lo
   object name extends MappedString(this, 100)
 
   object employees extends MappedOneToMany(Employee, Employee.department, OrderBy(Employee.id, Ascending))
-  //def employees = Employee.findAll(By(Employee.department, this.id))
 
   def getWithEmpCount = DB.runQuery("select d.id, d.name, count(e.department) " +
                                     "from Department d left outer join Employee e on d.id = e.department " +

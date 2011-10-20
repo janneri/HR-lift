@@ -6,7 +6,7 @@ import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import hr.lib._
 import Helpers._
-import hr.model.Department
+import hr.model.{Department, Employee, DepartmentEmpCountDto}
 import js.JsCmds.SetHtml
 import js.{JsCmd, JsCmds}
 
@@ -38,18 +38,14 @@ class DepartmentSnippet {
     }
   }
 
-  def listDepartments(xhtml : NodeSeq) : NodeSeq = {
+  def listDepartments = {
 
-    val entries : NodeSeq = Department.getWithEmpCount.flatMap({
-      dept => bind("dept",
-                   chooseTemplate("department", "entry", xhtml),
-                   "name" -> <a href={"/view_department/" + dept.id}>{dept.name}</a>,
-                   "empCount" -> dept.empCount,
-                   "viewEmps" -> { SHtml.ajaxButton("view emps", () => viewEmps(dept.id, dept.empCount)) },
-                   "actions" -> { SHtml.link("#", () => delDept(dept.id) , Text("Delete")) })
-    })
-
-    bind("department", xhtml, "entry" -> entries)
+    ".department" #> Department.getWithEmpCount.map(dept =>
+        ".name" #> <a href={"/view_department/" + dept.id}>{dept.name}</a> &
+        ".empCount" #> dept.empCount &
+        ".viewEmps" #> SHtml.ajaxButton("view emps", () => viewEmps(dept.id, dept.empCount)) &
+        ".actions" #> SHtml.link("#", () => delDept(dept.id) , Text("Delete"))
+    )
 
   }
 }
